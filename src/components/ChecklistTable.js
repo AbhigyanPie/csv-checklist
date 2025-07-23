@@ -1,71 +1,45 @@
-import React from "react";
-import "../styles/table.css";
+import React from 'react';
+import '../styles/table.css';
 
-function ChecklistTable({
-  data,
-  checked,
-  notes,
-  columns,
-  handleCheck,
-  handleNoteChange,
-}) {
-  // Show "No data" for empty sets
-  if (!data.length) {
-    return (
-      <div className="old-money-table-container" style={{
-        textAlign: 'center', color: '#8b7e67', padding: "2em"
-      }}>
-        <b>No data found.</b>
-      </div>
-    );
-  }
+function ChecklistTable({ data, checked, notes, columns, handleCheck, handleNoteChange }) {
   return (
     <div className="old-money-table-container">
       <table className="old-money-table">
         <thead>
           <tr>
+            <th>S.No.</th>
             <th>Done</th>
-            {columns.map((col) => (
+            {columns.map(col => (
               <th key={col}>{col}</th>
             ))}
             <th>Notes</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((row, i) => (
-            <tr key={i} className={checked[i] ? "row-checked" : ""}>
+          {data.map((row, idx) => (
+            <tr key={idx} className={checked[idx] ? 'row-checked' : ''}>
+              <td className="align-center">{idx + 1}</td>
               <td className="align-center">
                 <input
                   type="checkbox"
-                  checked={checked[i] || false}
-                  onChange={() => handleCheck(i)}
+                  checked={checked[idx] || false}
+                  onChange={() => handleCheck(idx)}
                 />
               </td>
-              {columns.map((col, idx) => (
-                <td key={col + idx} style={col === "URL" ? { minWidth: "220px", wordBreak: "break-all" } : {}}>
-                  {col === "URL" && row[col] ? (
-                    <a
-                      href={row[col]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="nice-link"
-                    >
-                      {row[col]}
-                    </a>
-                  ) : (
-                    row[col]
-                  )}
+              {columns.map((col, i) => (
+                <td key={i} style={col === 'URL' ? { wordBreak: 'break-word' } : {}}>
+                  {col === 'URL' && row[col] ? (
+                    <a href={row[col]} target="_blank" rel="noreferrer" className="nice-link">{row[col]}</a>
+                  ) : row[col]}
                 </td>
               ))}
               <td>
                 <textarea
                   className="notes-textarea"
-                  value={notes[i] || ""}
+                  value={notes[idx] || ''}
+                  onChange={(e) => handleNoteChange(idx, e.target.value)}
+                  onInput={autoResize}
                   placeholder="Add note..."
-                  rows={1}
-                  onChange={e => handleNoteChange(i, e.target.value)}
-                  onInput={autoResizeTextArea}
-                  spellCheck={true}
                 />
               </td>
             </tr>
@@ -76,11 +50,9 @@ function ChecklistTable({
   );
 }
 
-// Automatically expand textarea height on input
-function autoResizeTextArea(e) {
-  const textarea = e.target;
-  textarea.style.height = "auto";
-  textarea.style.height = textarea.scrollHeight + "px";
+function autoResize(e) {
+  e.target.style.height = 'auto';
+  e.target.style.height = `${e.target.scrollHeight}px`;
 }
 
 export default ChecklistTable;

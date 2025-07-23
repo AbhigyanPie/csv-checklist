@@ -133,3 +133,45 @@
   border-color: #e0d7c5;
   cursor: not-allowed;
 }
+
+.old-money-table td:first-child,
+.old-money-table th:first-child {
+  text-align: center;
+  font-weight: bold;
+  background: #f3eddd;
+}
+
+.clear-button {
+  background: #f1e3d3;
+  border: 1px solid #beae97;
+  border-radius: 7px;
+  padding: 0.6em 1.1em;
+  color: #653f2d;
+  font-family: Georgia, serif;
+  font-size: 1.03em;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.clear-button:hover {
+  background: #fbd8bb;
+  box-shadow: 0 2px 6px #ccbba899;
+}
+
+
+.delete-all-btn {
+  font-size: 1rem;
+  padding: 0.6em 1em;
+  color: #5c4b2b;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.delete-all-btn:hover {
+  background: #ffe3c0;
+}
+
+/* Reuse these from before or refine as needed */
+.search-input { /* ... */ }
+.sort-difficulty-btn { /* ... */ }
+.notes-textarea { /* ... */ }
+.old-money-table { /* ... */ }
