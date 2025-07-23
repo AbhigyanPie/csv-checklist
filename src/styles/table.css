@@ -1,0 +1,135 @@
+.old-money-table-container {
+  border-radius: 14px;
+  background: #fffcf5;
+  box-shadow: 0 6px 24px #bfa87f33, 0 1.5px 2.5px #ede4d160;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.old-money-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #f8f4ed;
+  font-family: "Georgia", serif;
+  font-size: 1.04rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px #eed7b967;
+}
+
+.old-money-table th, .old-money-table td {
+  padding: 1em 1.25em;
+  border-bottom: 1.3px solid #ccb68a;
+  vertical-align: top;
+}
+
+.old-money-table th {
+  background: linear-gradient(90deg, #e9dbc5 0%, #dfc192 100%);
+  color: #4e4327;
+  font-weight: 600;
+  font-size: 1.08em;
+  letter-spacing: .04em;
+  border-bottom: 2.5px solid #bfa87f;
+  text-align: left;
+}
+
+.old-money-table tr:last-child td {
+  border-bottom: none;
+}
+
+.old-money-table tr {
+  transition: background 0.16s;
+  min-height: 56px;
+}
+
+.old-money-table tr.row-checked {
+  background: #e8dfce !important;
+  color: #9b8870 !important;
+  font-style: italic;
+  text-decoration: line-through;
+}
+
+.old-money-table .align-center {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.old-money-table input[type="checkbox"] {
+  width: 1.1em;
+  height: 1.1em;
+  accent-color: #bfa87f;
+  border-radius: 6px;
+}
+
+.nice-link {
+  color: #866635;
+  text-decoration: underline wavy #ccb68a;
+  transition: color .15s;
+  word-break: break-all;
+}
+.nice-link:hover {
+  color: #4e4327;
+}
+
+.notes-textarea {
+  width: 100%;
+  min-width: 100px;
+  max-width: 250px;
+  min-height: 30px;
+  resize: none;
+  background: #fcf8f0;
+  border: 1px solid #bfa87f;
+  border-radius: 7px;
+  padding: 0.45em 0.7em;
+  font-size: 1.01em;
+  font-family: Georgia,serif;
+  color: #5c513d;
+  box-sizing: border-box;
+  transition: border-color .15s, box-shadow .15s;
+  line-height: 1.4em;
+}
+.notes-textarea:focus {
+  outline: none;
+  border-color: #a58d6d;
+  box-shadow: 0 0 0 2px #ece1c1a0;
+}
+
+/* Old money search input and sort button */
+.search-input {
+  border: 1px solid #ccb68a;
+  border-radius: 7px;
+  padding: 0.6em 1.1em;
+  background: #fdfaf4;
+  color: #5c513d;
+  font-size: 1.09em;
+  font-family: Georgia, serif;
+  transition: border-color .14s, box-shadow .1s;
+  min-width: 270px;
+  max-width: 420px;
+}
+.search-input:focus {
+  outline: none;
+  border-color: #bfa87f;
+  box-shadow: 0 0 0 2px #ede2ca99;
+}
+.sort-difficulty-btn {
+  background: linear-gradient(90deg, #e2cca2 0%, #ebddb1 100%);
+  color: #4e4327;
+  border: 1px solid #ccb68a;
+  border-radius: 8px;
+  padding: 0.7em 1.1em;
+  font-size: 1.05em;
+  font-family: Didot, serif;
+  font-weight: 580;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 1px 4px #ccb68a22;
+  transition: background .12s, color .11s, border-color .14s;
+}
+.sort-difficulty-btn[disabled] {
+  color: #b5ad98;
+  background: #f1ece0;
+  border-color: #e0d7c5;
+  cursor: not-allowed;
+}
