@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import ChecklistTable from './components/ChecklistTable';
 
-const LOCALSTORAGE_KEY = 'leetcode_csv_data_v4';
+const LOCALSTORAGE_KEY = 'leetcode_csv_data_v_multi';
 const REMOVE_COLUMNS = ['Acceptance %', 'Frequency %'];
 const DIFFICULTY_ORDER = { Easy: 1, Medium: 2, Hard: 3 };
 
@@ -12,7 +12,7 @@ function App() {
   const [notes, setNotes] = useState({});
   const [columns, setColumns] = useState([]);
   const [search, setSearch] = useState('');
-  const [sortDir, setSortDir] = useState('asc'); // 'asc' | 'desc' | 'none'
+  const [sortDir, setSortDir] = useState('asc');
 
   // Load from localStorage
   useEffect(() => {
@@ -37,41 +37,72 @@ function App() {
     }
   }, [data, checked, columns, notes, sortDir]);
 
-  // Handle CSV Upload & remove specified columns
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        const allCols = Object.keys(results.data[0] || {});
-        const filteredCols = allCols.filter(col => !REMOVE_COLUMNS.includes(col));
-        const filteredData = results.data.map(row => {
-          const newRow = {};
-          filteredCols.forEach(col => {
-            newRow[col] = row[col];
-          });
-          return newRow;
-        });
-        setData(filteredData);
-        setColumns(filteredCols);
-        // Reset checked and notes
-        const initialChecked = {};
-        const initialNotes = {};
-        filteredData.forEach((_, i) => {
-          initialChecked[i] = false;
-          initialNotes[i] = '';
-        });
-        setChecked(initialChecked);
-        setNotes(initialNotes);
-        setSortDir('asc');
-        setSearch('');
+  // Helper: Remove duplicates by Title, keep the first occurrence
+  function dedupeByTitle(rows) {
+    const seen = new Set();
+    const result = [];
+    for (const row of rows) {
+      const title = row.Title ? row.Title.trim().toLowerCase() : '';
+      if (!seen.has(title) && title) {
+        seen.add(title);
+        result.push(row);
       }
+    }
+    return result;
+  }
+
+  // Multi-file upload & parse, then merge and deduplicate by Title
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    let mergedRows = [];
+    let detectedColumns = new Set();
+    let parsedFiles = 0;
+
+    files.forEach((file) => {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          // Remove unwanted columns
+          const allCols = Object.keys(results.data[0] || {});
+          const filteredCols = allCols.filter(col => !REMOVE_COLUMNS.includes(col));
+          results.data.forEach(row => {
+            const filteredRow = {};
+            filteredCols.forEach(col => {
+              filteredRow[col] = row[col];
+              detectedColumns.add(col);
+            });
+            mergedRows.push(filteredRow);
+          });
+          parsedFiles++;
+          if (parsedFiles === files.length) {
+            // Merge, dedupe, preserve order
+            mergedRows = dedupeByTitle(mergedRows);
+            // Use Array.from to preserve order in Set
+            const columnsArr = Array.from(detectedColumns);
+            setData(mergedRows);
+            setColumns(columnsArr);
+
+            // Reset checked and notes for new data
+            const initialChecked = {};
+            const initialNotes = {};
+            mergedRows.forEach((_, i) => {
+              initialChecked[i] = false;
+              initialNotes[i] = '';
+            });
+            setChecked(initialChecked);
+            setNotes(initialNotes);
+            setSortDir('asc');
+            setSearch('');
+          }
+        }
+      });
     });
   };
 
-  // Sort logic
+  // Sorting, searching, and the rest as previously described...
   function getSortedData(rows, sortDir) {
     if (!columns.includes('Difficulty') || sortDir === 'none') return rows;
     return [...rows].sort((a, b) => {
@@ -83,26 +114,19 @@ function App() {
     });
   }
   function handleSortDifficulty() {
-    // Cycle sortDir: 'asc' → 'desc' → 'none' → 'asc'
     setSortDir(dir => dir === 'asc' ? 'desc' : dir === 'desc' ? 'none' : 'asc');
   }
-
-  // Search logic
   function getFilteredData(rows) {
     if (!search.trim()) return rows;
     const lc = s => (s || '').toString().toLowerCase();
-    return rows.filter((row, i) => {
-      // Search in all columns, plus notes
-      return columns.some(col => lc(row[col]).includes(lc(search)))
-        || lc(notes[i]).includes(lc(search));
-    });
+    return rows.filter((row, i) =>
+      columns.some(col => lc(row[col]).includes(lc(search))) ||
+      lc(notes[i]).includes(lc(search))
+    );
   }
-
-  // Final display data
   const sorted = getSortedData(data, sortDir);
   const filtered = getFilteredData(sorted);
 
-  // Event handlers
   const handleCheck = idx => setChecked(prev => ({ ...prev, [idx]: !prev[idx] }));
   const handleNoteChange = (idx, val) => setNotes(prev => ({ ...prev, [idx]: val }));
 
@@ -120,6 +144,7 @@ function App() {
         <input
           type="file"
           accept=".csv"
+          multiple
           onChange={handleFileUpload}
           style={{
             fontFamily: 'inherit',
